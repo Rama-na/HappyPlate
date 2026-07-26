@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rama-na.github.io/happyplate/sitemap.xml
