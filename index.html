@@ -144,14 +144,18 @@ body{
   text-align:center;
   padding:4.5rem 0 3.5rem;
 }
-.mark{ width:min(19rem, 68vw); height:auto; display:block; margin-bottom:2.25rem; }
-.mark text{ font-family:var(--display); fill:url(#gild); }
-.mark .arc-type{ font-size:30px; letter-spacing:11px; }
-.mark .mono{ font-size:210px; letter-spacing:-14px; }
-.mark .stroke{
-  fill:none; stroke:url(#gild); stroke-width:7; stroke-linecap:round;
+.mark{
+  width:min(20rem, 74vw); aspect-ratio:1; display:block;
+  margin-bottom:2.25rem; position:relative;
 }
-.mark .flat{ fill:url(#gild); }
+.mark__vid, .mark__img{
+  width:100%; height:100%; object-fit:contain; display:block;
+  /* the reveal is composited on the same ink as the page; soften the square
+     corners so the flat ground melts into the hero's ambient glow */
+  -webkit-mask:radial-gradient(circle closest-side, #000 88%, transparent 99%);
+          mask:radial-gradient(circle closest-side, #000 88%, transparent 99%);
+}
+.mark__img{ position:absolute; inset:0; }
 
 .eyebrow{
   font-size:.62rem; letter-spacing:.34em; text-transform:uppercase;
@@ -370,43 +374,17 @@ footer{
 
   <!-- ── hero ─────────────────────────────────────────────────────── -->
   <header class="hero col">
-    <svg class="mark" viewBox="0 0 440 440" role="img" aria-label="Happy Plate">
-      <defs>
-        <linearGradient id="gild" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0"   stop-color="#A87F45"/>
-          <stop offset=".38" stop-color="#F8E7C6"/>
-          <stop offset=".62" stop-color="#E7C090"/>
-          <stop offset="1"   stop-color="#B08A4F"/>
-        </linearGradient>
-        <path id="arc" d="M 225.9 52.1 A 168 168 0 0 1 372.3 291" fill="none"/>
-      </defs>
-
-      <!-- monogram -->
-      <text class="mono pop d1" x="220" y="292" text-anchor="middle">HP</text>
-
-      <!-- knife: blade at west, handle sweeps the base to the east -->
-      <path class="stroke draw" style="--len:460"
-            d="M 55.8 264 A 170 170 0 0 0 374 291.9"/>
-      <g class="flat pop d3" transform="translate(55.8,264) rotate(-15)">
-        <path d="M 0 0 C -1 -25 -6 -50 -12 -68 C -16 -81 -12 -93 -4 -93
-                 C 3 -93 8 -78 8 -60 C 8 -38 5 -18 4 0 Z"/>
-      </g>
-
-      <!-- fork: tines at west, handle sweeps up to the north -->
-      <path class="stroke draw" style="--len:250"
-            d="M 50.6 205.2 A 170 170 0 0 1 205.2 50.6"/>
-      <g class="flat pop d2" transform="translate(50.6,205.2) rotate(-6)">
-        <rect x="-15.5" y="2"  width="5" height="54" rx="2.5"/>
-        <rect x="-6.5"  y="2"  width="5" height="58" rx="2.5"/>
-        <rect x="2.5"   y="2"  width="5" height="58" rx="2.5"/>
-        <rect x="11.5"  y="2"  width="5" height="54" rx="2.5"/>
-      </g>
-
-      <!-- arc wordmark -->
-      <text class="arc-type pop d4">
-        <textPath href="#arc" startOffset="50%" text-anchor="middle">HAPPY PLATE</textPath>
-      </text>
-    </svg>
+    <div class="mark pop d1">
+      <!-- The real logo, revealed. The animation plays gold on the dark ground;
+           a still of the finished mark is the poster + reduced-motion fallback. -->
+      <video class="mark__vid" id="markVid" width="480" height="480"
+             poster="logo.png" autoplay muted playsinline preload="auto"
+             aria-label="Happy Plate">
+        <source src="logo-animation.webm" type="video/webm">
+        <source src="logo-animation.mp4" type="video/mp4">
+        <img class="mark__img" src="logo.png" alt="Happy Plate" width="480" height="480">
+      </video>
+    </div>
 
     <p class="eyebrow pop d4">Supper Club</p>
     <h1 class="pop d5">Join the table</h1>
@@ -781,6 +759,19 @@ function finish(payload){
   $("#done").classList.add("is-on");
   $("#done").scrollIntoView({ behavior:"smooth", block:"center" });
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   6 · Logo reveal — respect reduced motion by holding the finished mark
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  const v = document.getElementById("markVid");
+  if(!v) return;
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+    // Don't animate — hold the still poster (the finished mark).
+    v.removeAttribute("autoplay");
+    try{ v.pause(); v.load(); }catch(e){}
+  }
+})();
 </script>
 </body>
 </html>

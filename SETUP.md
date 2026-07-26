@@ -72,19 +72,21 @@ then redeploy a new version. Column order in the sheet follows that array.
 
 ---
 
-## Swapping in your real logo
+## The logo in the hero
 
-The mark in the hero is drawn in SVG so it scales, animates, and works on the dark
-background without a transparent file. If you'd rather use the original artwork,
-export it as a **transparent PNG or SVG**, drop it next to `index.html`, and replace
-the whole `<svg class="mark">…</svg>` block with:
+The hero now uses your real logo. It plays as a short reveal and settles on the
+finished mark:
 
-```html
-<img class="mark" src="logo.png" alt="Happy Plate">
-```
+| File | Role |
+|---|---|
+| `logo-animation.webm` / `.mp4` | The 7-second reveal. The taupe studio background has been keyed out and the gold composited onto the page's dark ink, so it plays cleanly on the hero (and everywhere — no transparent-video support needed). |
+| `logo.png` | Transparent still of the finished mark. Used as the video poster, the reduced-motion fallback, the social card, and the app icons. |
 
-The JPEG you have now has the beige background baked in, so it'll show as a square
-patch on the dark page — it needs a transparent export first.
+The reveal autoplays muted once; visitors with "reduce motion" turned on just see
+the still. To use a different logo, replace those files (keep the names) — export
+the still as a **transparent PNG** so it sits cleanly on the dark background. The
+raw JPEG has the beige background baked in, so it can't be dropped in as-is; it
+needs the background removed first.
 
 ---
 

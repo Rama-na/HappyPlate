@@ -17,6 +17,8 @@ hosts anywhere. This repo is set up to deploy to **GitHub Pages** automatically.
 | `index.html` | The entire site — markup, styles, and the six-course form logic. |
 | `Code.gs` | Google Apps Script that receives a submission and appends a row to your Sheet. |
 | `SETUP.md` | Step-by-step for wiring up the Google Sheet + Apps Script endpoint. |
+| `logo-animation.webm` / `.mp4` | The animated logo reveal that plays in the hero. |
+| `logo.png` | Transparent still of the finished logo (video poster, reduced-motion fallback, icon/card source). |
 | `favicon.svg`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` | Site icons. |
 | `og-image.png` | 1200×630 social-share card shown when the link is posted to WhatsApp, Instagram, etc. |
 | `site.webmanifest` | PWA manifest so the site can be "added to home screen". |
