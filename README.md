@@ -25,7 +25,7 @@ hosts anywhere. This repo is set up to deploy to **GitHub Pages** automatically.
 | `robots.txt`, `sitemap.xml` | Search-engine basics. |
 | `404.html` | Branded not-found page. |
 | `.nojekyll` | Tells GitHub Pages to serve files as-is (no Jekyll processing). |
-| `.github/workflows/deploy.yml` | Deploys the site to Pages on every push to `main`. |
+| `.github/workflows/static.yml` | Deploys the site to Pages on every push (and on demand from the Actions tab). |
 
 ---
 
@@ -33,12 +33,14 @@ hosts anywhere. This repo is set up to deploy to **GitHub Pages** automatically.
 
 The workflow does the publishing; you just have to switch Pages on once.
 
-1. Push this repo to GitHub (the branch that becomes your default should be `main`).
-2. In the repo: **Settings → Pages**.
-3. Under **Build and deployment → Source**, choose **GitHub Actions**.
-4. That's it. Every push to `main` runs `.github/workflows/deploy.yml` and
-   publishes the site. You can also trigger it by hand from the **Actions** tab
-   ("Deploy to GitHub Pages" → *Run workflow*).
+1. In the repo: **Settings → Pages**.
+2. Under **Build and deployment → Source**, choose **GitHub Actions**.
+3. That's it. `.github/workflows/static.yml` runs on every push to the deploy
+   branch and publishes the whole folder. You can also trigger it by hand from
+   the **Actions** tab (*Deploy static content to Pages* → *Run workflow*).
+
+> The workflow is wired to deploy from the branch it lives on. If you'd rather
+> deploy from `main`, edit the `branches:` line at the top of `static.yml`.
 
 Your site goes live at `https://<user>.github.io/<repo>/` — for this repo,
 https://rama-na.github.io/happyplate/.
