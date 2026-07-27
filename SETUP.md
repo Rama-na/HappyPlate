@@ -80,13 +80,19 @@ finished mark:
 | File | Role |
 |---|---|
 | `logo-animation.webm` / `.mp4` | The 7-second reveal. The taupe studio background has been keyed out and the gold composited onto the page's dark ink, so it plays cleanly on the hero (and everywhere — no transparent-video support needed). |
-| `logo.png` | Transparent still of the finished mark. Used as the video poster, the reduced-motion fallback, the social card, and the app icons. |
+| `logo.png` | Transparent still of the finished mark. The reveal hands off to this when it ends; it's also what shows on its own if the video can't play or motion is reduced, and it's the source for the social card and app icons. |
 
-The reveal autoplays muted once; visitors with "reduce motion" turned on just see
-the still. To use a different logo, replace those files (keep the names) — export
-the still as a **transparent PNG** so it sits cleanly on the dark background. The
-raw JPEG has the beige background baked in, so it can't be dropped in as-is; it
-needs the background removed first.
+The reveal autoplays muted once, then cross-fades to the still. That handoff is
+deliberate: a keyed video carries a little noise that varies frame to frame, so
+resting on the still is what keeps the logo perfectly steady once it has landed.
+There's no `poster` on the video on purpose — a poster of the finished logo would
+flash before the reveal starts on its first, near-empty frame. Visitors with
+"reduce motion" turned on skip the video entirely.
+
+To use a different logo, replace those files (keep the names) — export the still
+as a **transparent PNG** so it sits cleanly on the dark background. The raw JPEG
+has the beige background baked in, so it can't be dropped in as-is; it needs the
+background removed first.
 
 ---
 

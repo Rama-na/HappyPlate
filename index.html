@@ -56,16 +56,20 @@
   --gild-hi:  #F8E7C6;
   --gild-lo:  #A87F45;
   --linen:    #F3EADC;
-  --muted:    #A2907B;
+  --muted:    #AE9880;
   --warn:     #DB9370;
-  --line:     rgba(231,192,144,.20);
-  --line-2:   rgba(231,192,144,.38);
+  --line:     rgba(231,192,144,.18);
+  --line-2:   rgba(231,192,144,.36);
 
   --display: "Italiana", "Cormorant Garamond", Georgia, serif;
   --sans:    "Jost", "Avenir Next", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  --col: 34rem;
+  --col: 35rem;
   --ease: cubic-bezier(.22,.68,.35,1);
+
+  --r:    .75rem;
+  --r-lg: 1.15rem;
+  --glow: 0 1rem 3rem -1.2rem rgba(231,192,144,.55);
 }
 
 *{ box-sizing:border-box; }
@@ -77,63 +81,82 @@ body{
   font-family:var(--sans);
   font-weight:300;
   font-size:16px;
-  line-height:1.6;
+  line-height:1.65;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 ::selection{ background:var(--gild); color:var(--ink); }
 
-/* ambient candlelight + paper grain ------------------------------- */
+/* ambient candlelight, vignette + paper grain --------------------- */
 .ambient{
   position:fixed; inset:-20vh -20vw; z-index:0; pointer-events:none;
   background:
-    radial-gradient(45vw 45vw at 50% 8%,  rgba(231,192,144,.13), transparent 70%),
-    radial-gradient(60vw 55vw at 88% 72%, rgba(168,127,69,.11),  transparent 72%),
-    radial-gradient(50vw 50vw at 5% 92%,  rgba(231,192,144,.07), transparent 70%);
-  animation:breathe 14s ease-in-out infinite alternate;
+    radial-gradient(45vw 45vw at 50% 6%,  rgba(231,192,144,.15), transparent 70%),
+    radial-gradient(60vw 55vw at 88% 72%, rgba(168,127,69,.12),  transparent 72%),
+    radial-gradient(50vw 50vw at 5% 92%,  rgba(231,192,144,.08), transparent 70%);
+  animation:breathe 18s ease-in-out infinite alternate;
 }
-@keyframes breathe{ from{ opacity:.75; transform:scale(1); } to{ opacity:1; transform:scale(1.06); } }
+@keyframes breathe{ from{ opacity:.72; transform:scale(1); } to{ opacity:1; transform:scale(1.05); } }
+
+/* keeps the edges of the page dark so the gold always sits forward */
+.vignette{
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(120% 85% at 50% 40%, transparent 55%, rgba(12,9,6,.55) 100%);
+}
 
 .grain{
-  position:fixed; inset:0; z-index:1; pointer-events:none;
-  opacity:.30; mix-blend-mode:overlay;
+  position:fixed; inset:0; z-index:2; pointer-events:none;
+  opacity:.26; mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='.55'/></svg>");
 }
 
 /* ─────────────────────────────  shell  ───────────────────────────── */
-.wrap{ position:relative; z-index:2; }
-.col{ width:min(var(--col), calc(100% - 2.75rem)); margin-inline:auto; }
+.wrap{ position:relative; z-index:3; }
+.col{ width:min(var(--col), calc(100% - 2.5rem)); margin-inline:auto; }
+.rule{
+  width:100%; height:1px; border:0; margin:0;
+  background:linear-gradient(90deg, transparent, var(--line-2), transparent);
+}
 
 /* ─────────────────────────────  topbar  ──────────────────────────── */
 .topbar{
+  --p:0%;
   position:sticky; top:0; z-index:20;
   display:flex; align-items:center; gap:.85rem;
-  padding:.7rem 1.375rem;
-  background:rgba(29,23,18,.72);
-  backdrop-filter:blur(14px) saturate(1.2);
-  -webkit-backdrop-filter:blur(14px) saturate(1.2);
+  padding:.72rem 1.25rem;
+  background:rgba(29,23,18,.74);
+  backdrop-filter:blur(16px) saturate(1.25);
+  -webkit-backdrop-filter:blur(16px) saturate(1.25);
   border-bottom:1px solid transparent;
   opacity:0; transform:translateY(-100%);
   transition:opacity .45s var(--ease), transform .45s var(--ease), border-color .45s;
   pointer-events:none;
 }
 .topbar.is-on{ opacity:1; transform:none; border-bottom-color:var(--line); pointer-events:auto; }
-.topbar__ring{ width:2.25rem; height:2.25rem; flex:none; }
+/* hairline progress along the very bottom edge of the bar */
+.topbar::after{
+  content:""; position:absolute; left:0; bottom:-1px; height:1px; width:var(--p);
+  background:linear-gradient(90deg, var(--gild-lo), var(--gild) 60%, var(--gild-hi));
+  box-shadow:0 0 .6rem rgba(231,192,144,.5);
+  transition:width .7s var(--ease);
+}
+.topbar__ring{ width:2.3rem; height:2.3rem; flex:none; }
 .topbar__ring circle{ fill:none; stroke-width:2; }
-.topbar__ring .track{ stroke:rgba(231,192,144,.18); }
+.topbar__ring .track{ stroke:rgba(231,192,144,.16); }
 .topbar__ring .fill{
   stroke:var(--gild); stroke-linecap:round;
   stroke-dasharray:94.25; stroke-dashoffset:94.25;
   transform:rotate(-90deg); transform-origin:50% 50%;
   transition:stroke-dashoffset .7s var(--ease);
 }
-.topbar__meta{ display:flex; flex-direction:column; gap:.1rem; min-width:0; }
+.topbar__meta{ display:flex; flex-direction:column; gap:.05rem; min-width:0; }
 .topbar__step{
-  font-size:.6rem; letter-spacing:.22em; text-transform:uppercase;
+  font-size:.58rem; letter-spacing:.24em; text-transform:uppercase;
   color:var(--muted); font-weight:400;
 }
 .topbar__name{
-  font-family:var(--display); font-size:1.05rem; line-height:1.1;
+  font-family:var(--display); font-size:1.08rem; line-height:1.15;
   color:var(--gild); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
@@ -142,51 +165,104 @@ body{
   min-height:100svh;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   text-align:center;
-  padding:4.5rem 0 3.5rem;
+  padding:4.5rem 0 3rem;
 }
+
+/* ── the mark ──
+   Two stacked layers: the reveal (video) plays on top, then hands off to a
+   pristine still. The video's matte carries faint per-frame noise, so ending
+   on the still is what keeps the resting logo perfectly steady. */
 .mark{
-  width:min(20rem, 74vw); aspect-ratio:1; display:block;
-  margin-bottom:2.25rem; position:relative;
+  width:min(20.5rem, 76vw); aspect-ratio:1; display:block;
+  margin-bottom:2rem; position:relative;
 }
-.mark__vid, .mark__img{
+.mark__halo{
+  position:absolute; inset:-12%; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(231,192,144,.14), transparent 62%);
+  opacity:.6; transition:opacity 1.2s var(--ease);
+}
+.mark.is-settled .mark__halo{ opacity:1; }
+.mark__vid, .mark__still{
+  position:absolute; inset:0;
   width:100%; height:100%; object-fit:contain; display:block;
-  /* the reveal is composited on the same ink as the page; soften the square
-     corners so the flat ground melts into the hero's ambient glow */
-  -webkit-mask:radial-gradient(circle closest-side, #000 88%, transparent 99%);
-          mask:radial-gradient(circle closest-side, #000 88%, transparent 99%);
+  /* the reveal is composited on the page's own ink; feather the square
+     edge so that flat ground melts into the hero's ambient glow */
+  -webkit-mask:radial-gradient(circle closest-side, #000 86%, transparent 99%);
+          mask:radial-gradient(circle closest-side, #000 86%, transparent 99%);
 }
-.mark__img{ position:absolute; inset:0; }
+.mark__still{ opacity:0; transition:opacity .7s var(--ease); }
+.mark__vid{  opacity:1; transition:opacity .7s var(--ease); }
+.mark.is-settled .mark__still{ opacity:1; }
+.mark.is-settled .mark__vid{  opacity:0; }
 
 .eyebrow{
+  display:flex; align-items:center; justify-content:center; gap:.85rem;
   font-size:.62rem; letter-spacing:.34em; text-transform:uppercase;
-  color:var(--muted); font-weight:400; margin:0 0 1.1rem;
+  color:var(--muted); font-weight:400; margin:0 0 1.15rem;
 }
+.eyebrow::before, .eyebrow::after{
+  content:""; height:1px; width:2.2rem; flex:none;
+  background:linear-gradient(90deg, transparent, var(--line-2));
+}
+.eyebrow::after{ background:linear-gradient(90deg, var(--line-2), transparent); }
+
 .hero h1{
   font-family:var(--display); font-weight:400;
-  font-size:clamp(2.9rem, 12vw, 4.5rem);
+  font-size:clamp(2.9rem, 12vw, 4.6rem);
   line-height:.98; letter-spacing:.005em;
-  margin:0 0 1.15rem;
+  margin:0 0 1.2rem;
   background:linear-gradient(168deg, var(--gild-hi), var(--gild) 45%, var(--gild-lo));
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 .lede{
-  margin:0 auto 2.5rem; max-width:27rem;
-  color:rgba(243,234,220,.78); font-size:1.02rem;
+  margin:0 auto 2.6rem; max-width:27rem;
+  color:rgba(243,234,220,.80); font-size:1.03rem;
 }
 
+/* ── what the evening is ── */
 .facts{
-  list-style:none; margin:0 0 2.75rem; padding:0;
-  display:grid; gap:1px; width:100%;
-  background:var(--line);
-  border-block:1px solid var(--line);
+  list-style:none; margin:0 0 2.6rem; padding:0;
+  display:grid; gap:.7rem; width:100%;
+  counter-reset:fact;
 }
-.facts li{ background:var(--ink); padding:1.1rem .5rem 1.2rem; }
+.facts li{
+  position:relative; text-align:left;
+  padding:1.25rem 1.15rem 1.3rem 3.1rem;
+  border:1px solid var(--line); border-radius:var(--r-lg);
+  background:linear-gradient(180deg, rgba(231,192,144,.05), rgba(231,192,144,.012));
+  transition:border-color .35s var(--ease), transform .35s var(--ease), background .35s;
+}
+.facts li::before{
+  counter-increment:fact; content:counter(fact, decimal-leading-zero);
+  position:absolute; left:1.15rem; top:1.45rem;
+  font-size:.6rem; letter-spacing:.12em; color:var(--gild-lo);
+}
 .facts b{
   display:block; font-family:var(--display); font-weight:400;
-  font-size:1.28rem; color:var(--gild); letter-spacing:.01em; margin-bottom:.15rem;
+  font-size:1.3rem; color:var(--gild); letter-spacing:.01em; margin-bottom:.1rem;
 }
-.facts span{ font-size:.83rem; color:var(--muted); }
-@media(min-width:34rem){ .facts{ grid-template-columns:repeat(3,1fr); } }
+.facts span{ font-size:.85rem; color:var(--muted); }
+@media(hover:hover){
+  .facts li:hover{ border-color:var(--line-2); transform:translateY(-2px); }
+}
+@media(min-width:36rem){
+  .facts{ grid-template-columns:repeat(3,1fr); gap:.65rem; }
+  .facts li{ padding:2.4rem 1rem 1.3rem; }
+  .facts li::before{ top:1.15rem; left:1rem; }
+}
+
+/* scroll cue under the hero CTA */
+.cue{
+  display:block; width:1px; height:3.2rem; margin:2rem auto 0;
+  background:linear-gradient(180deg, var(--line-2), transparent);
+  position:relative; overflow:hidden;
+}
+.cue::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent, var(--gild), transparent);
+  animation:trickle 2.6s var(--ease) infinite;
+}
+@keyframes trickle{ 0%{ transform:translateY(-100%); } 60%,100%{ transform:translateY(100%); } }
 
 /* ─────────────────────────────  buttons  ─────────────────────────── */
 .btn{
@@ -194,90 +270,115 @@ body{
   font-family:var(--sans); font-size:.74rem; font-weight:400;
   letter-spacing:.22em; text-transform:uppercase;
   padding:1.05rem 2.4rem; border-radius:999px;
-  position:relative; overflow:hidden;
-  transition:transform .18s var(--ease), box-shadow .3s var(--ease), opacity .2s;
+  min-height:3rem;
+  position:relative; overflow:hidden; isolation:isolate;
+  transition:transform .18s var(--ease), box-shadow .3s var(--ease),
+             opacity .2s, color .28s var(--ease), border-color .28s var(--ease);
 }
 .btn--gild{
   background:linear-gradient(150deg, var(--gild-hi), var(--gild) 48%, var(--gild-lo));
   color:#20180F;
-  box-shadow:0 .8rem 2.4rem -1rem rgba(231,192,144,.6);
+  box-shadow:var(--glow);
 }
-.btn--gild:hover{ transform:translateY(-2px); box-shadow:0 1.1rem 2.8rem -.9rem rgba(231,192,144,.75); }
+/* light travelling across the gold on hover */
+.btn--gild::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(105deg, transparent 34%, rgba(255,252,245,.6) 50%, transparent 66%);
+  transform:translateX(-125%);
+  transition:transform .8s var(--ease);
+}
+.btn--gild:hover{ transform:translateY(-2px); box-shadow:0 1.25rem 3rem -1rem rgba(231,192,144,.75); }
+.btn--gild:hover::after{ transform:translateX(125%); }
 .btn--gild:active{ transform:translateY(0) scale(.985); }
 .btn--ghost{
   background:transparent; color:var(--muted);
-  border:1px solid var(--line-2); padding:1.05rem 1.6rem;
+  border:1px solid var(--line-2); padding:1.05rem 1.7rem;
 }
 .btn--ghost:hover{ color:var(--gild); border-color:var(--gild); }
-.btn[disabled]{ opacity:.5; cursor:progress; }
-.btn:focus-visible, .chip:focus-visible, input:focus-visible, textarea:focus-visible{
+.btn[disabled]{ opacity:.55; cursor:progress; transform:none; }
+.btn:focus-visible, .chip:focus-visible, input:focus-visible, textarea:focus-visible,
+a:focus-visible{
   outline:2px solid var(--gild); outline-offset:3px;
 }
-.micro{ font-size:.74rem; color:var(--muted); margin:1.1rem 0 0; letter-spacing:.04em; }
+.micro{ font-size:.74rem; color:var(--muted); margin:1.15rem 0 0; letter-spacing:.05em; }
 
 /* ─────────────────────────────  courses  ─────────────────────────── */
+#form{ scroll-margin-top:4.25rem; }
 .stage{ padding:1rem 0 2rem; position:relative; }
-.course{
-  display:none;
-  animation:rise .55s var(--ease) both;
-}
+.course{ display:none; }
 .course.is-active{ display:block; }
-@keyframes rise{ from{ opacity:0; transform:translateY(18px); } to{ opacity:1; transform:none; } }
+/* the head and each field arrive in sequence rather than as one slab */
+.course.is-active > *{ animation:rise .5s var(--ease) both; }
+.course.is-active > *:nth-child(2){ animation-delay:.07s; }
+.course.is-active > *:nth-child(3){ animation-delay:.14s; }
+.course.is-active > *:nth-child(4){ animation-delay:.21s; }
+@keyframes rise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
 
-.course__head{ margin:0 0 2.4rem; }
+.course__head{ margin:0 0 2.5rem; }
 .course__no{
   display:flex; align-items:center; gap:.7rem;
   font-size:.6rem; letter-spacing:.26em; text-transform:uppercase; color:var(--muted);
-  margin-bottom:.7rem;
+  margin-bottom:.75rem;
 }
-.course__no::after{ content:""; height:1px; flex:1; background:var(--line); }
+.course__no::after{
+  content:""; height:1px; flex:1;
+  background:linear-gradient(90deg, var(--line-2), transparent);
+}
 .course__title{
   font-family:var(--display); font-weight:400;
-  font-size:clamp(2rem,8vw,2.7rem); line-height:1.05;
+  font-size:clamp(2rem,8vw,2.75rem); line-height:1.05;
   color:var(--gild); margin:0;
 }
-.course__note{ margin:.6rem 0 0; color:var(--muted); font-size:.9rem; }
+.course__note{ margin:.65rem 0 0; color:var(--muted); font-size:.9rem; }
 
 /* fields ---------------------------------------------------------- */
-.field{ margin-bottom:2.4rem; border:0; padding:0; }
+.field{ margin-bottom:2.5rem; border:0; padding:0; min-inline-size:0; }
+.field[hidden]{ display:none; }
 .f-label{
   display:block; font-size:.63rem; letter-spacing:.24em; text-transform:uppercase;
-  color:var(--gild); font-weight:400; margin-bottom:.85rem; padding:0;
+  color:var(--gild); font-weight:400; margin-bottom:.9rem; padding:0;
 }
-.f-help{ display:block; font-size:.79rem; color:var(--muted); margin:-.5rem 0 .85rem; letter-spacing:.02em; }
+.f-help{ display:block; font-size:.8rem; color:var(--muted); margin:-.55rem 0 .9rem; letter-spacing:.02em; }
 
 .f-input, .f-area{
   width:100%; display:block;
   background:transparent; border:0; border-bottom:1px solid var(--line-2);
   color:var(--linen); font-family:var(--sans); font-size:1.06rem; font-weight:300;
-  padding:.55rem 0 .7rem; border-radius:0;
-  transition:border-color .3s var(--ease), box-shadow .3s var(--ease);
+  padding:.6rem 0 .72rem; border-radius:0;
+  /* a gold underline that grows from the left on focus */
+  background-image:linear-gradient(var(--gild), var(--gild));
+  background-repeat:no-repeat; background-position:0 100%; background-size:0% 1px;
+  transition:border-color .3s var(--ease), background-size .45s var(--ease);
 }
 .f-area{ resize:none; line-height:1.65; overflow:hidden; min-height:3.2rem; }
-.f-input::placeholder, .f-area::placeholder{ color:rgba(162,144,123,.55); }
+.f-input::placeholder, .f-area::placeholder{ color:rgba(174,152,128,.5); }
 .f-input:focus, .f-area:focus{
-  outline:none; border-bottom-color:var(--gild);
-  box-shadow:0 12px 26px -22px var(--gild);
+  outline:none; border-bottom-color:var(--line-2);
+  background-size:100% 1px;
 }
 .field.has-error .f-input, .field.has-error .f-area{ border-bottom-color:var(--warn); }
 
 .chips{ display:flex; flex-wrap:wrap; gap:.55rem; }
 .chip{
   appearance:none; cursor:pointer; position:relative; overflow:hidden;
-  background:transparent; color:rgba(243,234,220,.82);
+  background:transparent; color:rgba(243,234,220,.84);
   border:1px solid var(--line-2); border-radius:999px;
-  padding:.62rem 1.15rem;
+  padding:.68rem 1.2rem; min-height:2.75rem;
   font-family:var(--sans); font-size:.88rem; font-weight:300; letter-spacing:.02em;
-  transition:color .28s var(--ease), border-color .28s var(--ease), transform .16s var(--ease);
+  z-index:0; isolation:isolate;
+  transition:color .28s var(--ease), border-color .28s var(--ease),
+             transform .16s var(--ease), box-shadow .3s var(--ease);
 }
 .chip::before{
   content:""; position:absolute; inset:0; z-index:-1;
   background:linear-gradient(150deg, var(--gild-hi), var(--gild) 50%, var(--gild-lo));
   transform:translateX(-101%); transition:transform .38s var(--ease);
 }
-.chip{ z-index:0; isolation:isolate; }
 .chip:hover{ border-color:var(--gild); color:var(--gild); }
-.chip[aria-pressed="true"]{ color:#20180F; border-color:transparent; }
+.chip[aria-pressed="true"]{
+  color:#20180F; border-color:transparent;
+  box-shadow:0 .5rem 1.5rem -.7rem rgba(231,192,144,.6);
+}
 .chip[aria-pressed="true"]::before{ transform:none; }
 .chip:active{ transform:scale(.96); }
 .field.has-error .chip{ border-color:rgba(219,147,112,.5); }
@@ -317,45 +418,58 @@ body{
   padding:4rem 0;
 }
 .done.is-on{ display:flex; }
-.done__seal{ width:8.5rem; height:8.5rem; margin-bottom:2rem; }
-.done__seal circle{ fill:none; stroke:var(--gild); stroke-width:2.5; stroke-linecap:round;
+/* the seal: a ring draws itself, then the mark settles inside it */
+.done__seal{
+  position:relative; width:9rem; height:9rem; margin-bottom:2.1rem;
+}
+.done__seal svg{ position:absolute; inset:0; width:100%; height:100%; }
+.done__seal circle{
+  fill:none; stroke:var(--gild); stroke-width:2; stroke-linecap:round;
   stroke-dasharray:326.7; stroke-dashoffset:326.7;
   transform:rotate(-90deg); transform-origin:50% 50%;
-  animation:seal 1.5s var(--ease) .15s forwards; }
+  animation:seal 1.5s var(--ease) .15s forwards;
+}
 @keyframes seal{ to{ stroke-dashoffset:0; } }
-.done__seal text{ font-family:var(--display); font-size:44px; fill:var(--gild); letter-spacing:-3px;
-  opacity:0; animation:fadeUp .7s var(--ease) 1s forwards; }
+.done__seal img{
+  position:absolute; inset:14%; width:72%; height:72%; object-fit:contain;
+  opacity:0; animation:fadeUp .9s var(--ease) .9s forwards;
+}
 @keyframes fadeUp{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:none;} }
 .done h2{
   font-family:var(--display); font-weight:400; font-size:clamp(2.2rem,9vw,3.2rem);
-  line-height:1.05; color:var(--gild); margin:0 0 1.1rem;
+  line-height:1.05; color:var(--gild); margin:0 0 1.15rem;
 }
-.done p{ color:rgba(243,234,220,.78); max-width:26rem; margin:0 auto 1rem; }
+.done p{ color:rgba(243,234,220,.80); max-width:26rem; margin:0 auto 1rem; }
 
 /* ─────────────────────────────  footer  ──────────────────────────── */
 footer{
   border-top:1px solid var(--line); text-align:center;
-  padding:2.2rem 0 2.6rem; color:var(--muted);
+  padding:2.4rem 0 2.8rem; color:var(--muted);
   font-size:.68rem; letter-spacing:.24em; text-transform:uppercase;
+  display:flex; flex-direction:column; align-items:center; gap:.9rem;
 }
+.footer__mark{ width:2.6rem; height:2.6rem; object-fit:contain; opacity:.8; }
 
 /* ─────────────────────────────  intro motion  ────────────────────── */
-.draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); animation:draw 1.5s var(--ease) .25s forwards; }
-@keyframes draw{ to{ stroke-dashoffset:0; } }
 .pop{ opacity:0; animation:fadeUp .8s var(--ease) forwards; }
-.d1{ animation-delay:.15s } .d2{ animation-delay:1.15s } .d3{ animation-delay:1.4s }
-.d4{ animation-delay:1.55s } .d5{ animation-delay:1.7s } .d6{ animation-delay:1.85s }
+.d1{ animation-delay:.1s }  .d2{ animation-delay:.9s }  .d3{ animation-delay:1.05s }
+.d4{ animation-delay:1.2s } .d5{ animation-delay:1.35s } .d6{ animation-delay:1.5s }
 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important;
     transition-duration:.01ms !important; scroll-behavior:auto !important; }
-  .draw{ stroke-dashoffset:0; } .pop{ opacity:1; }
+  .pop{ opacity:1; }
+  .cue::after{ display:none; }
+  /* never play the reveal — show the finished mark straight away */
+  .mark__vid{ display:none; }
+  .mark__still{ opacity:1; }
 }
 </style>
 </head>
 
 <body>
 <div class="ambient" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
@@ -374,16 +488,18 @@ footer{
 
   <!-- ── hero ─────────────────────────────────────────────────────── -->
   <header class="hero col">
-    <div class="mark pop d1">
-      <!-- The real logo, revealed. The animation plays gold on the dark ground;
-           a still of the finished mark is the poster + reduced-motion fallback. -->
-      <video class="mark__vid" id="markVid" width="480" height="480"
-             poster="logo.png" autoplay muted playsinline preload="auto"
-             aria-label="Happy Plate">
+    <div class="mark pop d1" id="mark">
+      <span class="mark__halo" aria-hidden="true"></span>
+      <!-- The reveal. No poster on purpose: a poster of the finished logo would
+           flash before the video starts on its first (near-empty) frame. -->
+      <video class="mark__vid" id="markVid" width="640" height="640"
+             autoplay muted playsinline preload="auto" aria-hidden="true">
         <source src="logo-animation.webm" type="video/webm">
         <source src="logo-animation.mp4" type="video/mp4">
-        <img class="mark__img" src="logo.png" alt="Happy Plate" width="480" height="480">
       </video>
+      <!-- Crisp still of the finished mark; faded in once the reveal ends, and
+           the only thing shown if the video can't play or motion is reduced. -->
+      <img class="mark__still" src="logo.png" alt="Happy Plate" width="640" height="640">
     </div>
 
     <p class="eyebrow pop d4">Supper Club</p>
@@ -399,6 +515,7 @@ footer{
 
     <button class="btn btn--gild pop d6" id="start">Reserve a seat</button>
     <p class="micro pop d6">Takes about two minutes</p>
+    <span class="cue pop d6" aria-hidden="true"></span>
   </header>
 
   <!-- ── form ─────────────────────────────────────────────────────── -->
@@ -414,16 +531,19 @@ footer{
 
   <!-- ── confirmation ─────────────────────────────────────────────── -->
   <section class="done col" id="done" aria-live="polite">
-    <svg class="done__seal" viewBox="0 0 120 120" aria-hidden="true">
-      <circle cx="60" cy="60" r="52"/>
-      <text x="60" y="76" text-anchor="middle">HP</text>
-    </svg>
+    <div class="done__seal" aria-hidden="true">
+      <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/></svg>
+      <img src="logo.png" alt="">
+    </div>
     <h2 id="doneTitle">Your seat is on hold</h2>
     <p id="doneBody"></p>
     <p class="micro">See you at the table.</p>
   </section>
 
-  <footer>Happy Plate Supper Club</footer>
+  <footer>
+    <img class="footer__mark" src="logo.png" alt="" width="42" height="42">
+    <span>Happy Plate Supper Club</span>
+  </footer>
 </div>
 
 <script>
@@ -676,6 +796,7 @@ function show(i){
   $("#ringStep").textContent = `Course ${String(i + 1).padStart(2, "0")} of ${String(COURSES.length).padStart(2, "0")}`;
   $("#ringName").textContent = COURSES[i].name;
   ring.style.strokeDashoffset = RING_LEN * (1 - i / COURSES.length);
+  topbar.style.setProperty("--p", (i / COURSES.length * 100) + "%");
   $("#status").textContent = "";
 }
 
@@ -756,6 +877,7 @@ function finish(payload){
   $("#form").hidden = true;
   topbar.classList.remove("is-on");
   ring.style.strokeDashoffset = 0;
+  topbar.style.setProperty("--p", "100%");
   $("#done").classList.add("is-on");
   $("#done").scrollIntoView({ behavior:"smooth", block:"center" });
 }
@@ -764,13 +886,28 @@ function finish(payload){
    6 · Logo reveal — respect reduced motion by holding the finished mark
    ══════════════════════════════════════════════════════════════════ */
 (function(){
-  const v = document.getElementById("markVid");
-  if(!v) return;
+  const mark = document.getElementById("mark");
+  const v    = document.getElementById("markVid");
+  if(!mark || !v) return;
+
+  let settled = false;
+  /* Hand off from the video to the crisp still. The keyed matte carries a little
+     per-frame noise, so resting on the still is what stops the logo shimmering. */
+  const settle = () => { if(settled) return; settled = true; mark.classList.add("is-settled"); };
+
   if(matchMedia("(prefers-reduced-motion: reduce)").matches){
-    // Don't animate — hold the still poster (the finished mark).
     v.removeAttribute("autoplay");
-    try{ v.pause(); v.load(); }catch(e){}
+    try{ v.pause(); }catch(e){}
+    settle();
+    return;
   }
+
+  v.addEventListener("ended", settle, { once:true });
+  v.addEventListener("error", settle, { once:true });
+  /* If autoplay is blocked or the file never arrives, don't sit on an empty square. */
+  setTimeout(() => { if(v.paused || v.readyState < 2) settle(); }, 1800);
+  /* Backstop: never hold the video past its own length. */
+  setTimeout(settle, 9000);
 })();
 </script>
 </body>
