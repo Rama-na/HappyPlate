@@ -1,99 +1,105 @@
-# Happy Plate Supper Club
+# Happy Plate — A Supper Club
 
-A single-page registration site for the Happy Plate Supper Club. Guests move
-through six short "courses" and their answers land in a Google Sheet.
+An intimate supper club where strangers share one long table, a set menu, and an
+evening worth staying late for. The site is a long-form scrolling invitation
+that ends in the reservation form.
 
-No build step, no framework, no npm — it's plain static HTML/CSS/JS, so it
-hosts anywhere. This repo is set up to deploy to **GitHub Pages** automatically.
-
-**Live:** https://rama-na.github.io/happyplate/
+**Live:** https://rama-na.github.io/HappyPlate/
 
 ---
 
-## What's in here
+## Stack
 
-| File | What it is |
+| | |
 |---|---|
-| `index.html` | The entire site — markup, styles, and the six-course form logic. |
-| `Code.gs` | Google Apps Script that receives a submission and appends a row to your Sheet. |
-| `SETUP.md` | Step-by-step for wiring up the Google Sheet + Apps Script endpoint. |
-| `logo-animation.webm` / `.mp4` | The animated logo reveal that plays in the hero. |
-| `logo.png` | Transparent still of the finished logo — the reveal settles onto it, and it stands in when motion is reduced. Also the icon/card source. |
-| `favicon.svg`, `apple-touch-icon.png`, `icon-192.png`, `icon-512.png` | Site icons. |
-| `og-image.png` | 1200×630 social-share card shown when the link is posted to WhatsApp, Instagram, etc. |
-| `site.webmanifest` | PWA manifest so the site can be "added to home screen". |
-| `robots.txt`, `sitemap.xml` | Search-engine basics. |
-| `404.html` | Branded not-found page. |
-| `.nojekyll` | Tells GitHub Pages to serve files as-is (no Jekyll processing). |
-| `.github/workflows/static.yml` | Deploys the site to Pages on every push (and on demand from the Actions tab). |
+| **React 19 + TypeScript** | built with **Vite** |
+| **GSAP + ScrollTrigger** | every scroll-linked animation |
+| **Lenis** | smooth scrolling, driven off GSAP's ticker so the two share one clock |
+| **Self-hosted Cormorant Garamond + Inter** | no third-party font request |
 
----
+No CSS framework — the design system lives in `src/styles/global.css`.
 
-## Deploy to GitHub Pages
-
-The workflow does the publishing; you just have to switch Pages on once.
-
-1. In the repo: **Settings → Pages**.
-2. Under **Build and deployment → Source**, choose **GitHub Actions**.
-3. That's it. `.github/workflows/static.yml` runs on every push to the deploy
-   branch and publishes the whole folder. You can also trigger it by hand from
-   the **Actions** tab (*Deploy static content to Pages* → *Run workflow*).
-
-> The workflow is wired to deploy from the branch it lives on. If you'd rather
-> deploy from `main`, edit the `branches:` line at the top of `static.yml`.
-
-Your site goes live at `https://<user>.github.io/<repo>/` — for this repo,
-https://rama-na.github.io/happyplate/.
-
-### Custom domain (optional)
-
-1. Add a file named `CNAME` at the repo root containing just your domain, e.g.:
-   ```
-   happyplate.club
-   ```
-2. Point the domain's DNS at GitHub Pages ([GitHub's guide](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site)).
-3. Update the absolute URLs so social previews and search engines point at the
-   new domain — search these files for `rama-na.github.io/happyplate` and swap in
-   your domain:
-   - `index.html` (canonical, Open Graph, Twitter, JSON-LD)
-   - `robots.txt`, `sitemap.xml`
-
----
-
-## Connect the form to your Google Sheet
-
-The form won't record anything until you point it at an Apps Script endpoint.
-Full walkthrough is in **[SETUP.md](SETUP.md)** — the short version:
-
-1. Create a Google Sheet, open **Extensions → Apps Script**, and paste in `Code.gs`.
-2. Set `SHEET_ID` (from the sheet URL). Optionally set `NOTIFY_EMAIL`.
-3. **Deploy → New deployment → Web app**, *Execute as: Me*, *Who has access: Anyone*.
-4. Copy the `/exec` URL and paste it into `index.html`:
-   ```js
-   const ENDPOINT = "https://script.google.com/macros/s/…/exec";
-   ```
-5. Commit and push — the deploy workflow ships it.
-
-> The site is safe to publish before it's connected: until a valid endpoint is
-> set, the final step shows *"This form isn't connected yet."* instead of failing silently.
-
----
-
-## Editing the form
-
-Every question lives in the `COURSES` array near the bottom of `index.html`.
-See the **Editing the form** section of [SETUP.md](SETUP.md) for field types
-(`text` · `tel` · `email` · `textarea` · `single` · `multi`) and options like
-conditional fields and "Something else" chips. If you add a question, add its
-`key` to `COLUMNS` in `Code.gs` too, then redeploy the Apps Script.
-
----
-
-## Local preview
-
-Open `index.html` in a browser, or serve the folder:
+## Running it
 
 ```bash
-python3 -m http.server 8000
-# then visit http://localhost:8000
+npm install
+npm run dev        # http://localhost:5173/HappyPlate/
+npm run build      # typecheck + production build into dist/
+npm run preview    # serve the built site exactly as Pages will
 ```
+
+`vite.config.ts` sets `base: '/HappyPlate/'` to match the Pages path. That path
+is **case-sensitive** — if the repository is ever renamed, update `base` and the
+absolute URLs in `index.html`, `public/robots.txt` and `public/sitemap.xml`.
+
+## Deploying
+
+`.github/workflows/static.yml` installs, builds, and publishes `dist/` to Pages
+on every push to the deploy branch (and on demand from the Actions tab). The one
+manual step is **Settings → Pages → Source → GitHub Actions**.
+
+## Connecting the reservation form
+
+The form is fully built but inert until it has somewhere to post. Open
+**`src/lib/reservation.ts`** and set:
+
+```ts
+export const ENDPOINT = 'https://script.google.com/macros/s/…/exec';
+```
+
+Until then the last step shows *"This form isn't connected yet"* rather than
+losing a registration. Full walkthrough in **[SETUP.md](SETUP.md)**.
+
+## Editing content
+
+Everything a non-developer needs to change is data, not JSX:
+
+| File | What it holds |
+|---|---|
+| `src/data/dinners.ts` | upcoming dinners — **currently sample events**, replace them |
+| `src/data/courses.ts` | the six reservation courses and their fields |
+| `src/data/site.ts` | club name, Instagram and contact email (blank → link hidden) |
+
+Add a field to `courses.ts` and you must add its `key` to `COLUMNS` in
+`Code.gs`, then redeploy the Apps Script — the sheet's column order is driven
+from there.
+
+## Structure
+
+```
+src/
+  animations/     lenis.ts, gsap.ts — smooth scroll + the shared animation language
+  components/     one file per section, plus motion/ primitives
+  data/           courses, dinners, site config
+  lib/            asset paths, reservation submit logic
+  styles/         global.css (design system), sections.css, reservation.css
+  assets/         photography, fonts, image manifest
+```
+
+## Photography
+
+All imagery is the club's own, cropped from the supplied originals to remove
+baked-in text and social-post furniture, then emitted at several widths as WebP
+with JPEG fallbacks (`src/assets/images.ts`).
+
+There is **no food photography yet**. The gallery deliberately shows the room
+and the table as it is laid rather than stock plates, and the copy talks about
+the menu without describing dishes. Drop real course photography into the
+manifest when it exists.
+
+## Motion and accessibility
+
+Everything scroll-linked runs through GSAP inside a `gsap.context`, so tweens
+and ScrollTriggers are reverted on unmount. `prefers-reduced-motion` is honoured
+throughout: Lenis never starts, parallax and scrubs are skipped, and the intro
+is bypassed — content renders in its final state. The intro also plays only once
+per session (`sessionStorage`).
+
+## A note on React Bits
+
+The brief asked for React Bits components. Its registry (`reactbits.dev`) is
+blocked by the network this was built on, so `src/components/motion/` holds
+hand-built equivalents — `BlurText`, `SplitText`, `ScrollReveal`,
+`AnimatedContent` — with the same names and prop shapes. See
+[`src/components/motion/README.md`](src/components/motion/README.md) for how to
+swap in the real ones.

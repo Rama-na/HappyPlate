@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · Happy Plate</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2B211C">
+<link rel="icon" href="/HappyPlate/favicon.svg" type="image/svg+xml">
+<style>
+  @font-face{
+    font-family:'Cormorant Garamond';
+    src:url('/HappyPlate/cormorant.woff2') format('woff2');
+    font-weight:300 600; font-display:swap;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100svh; background:#FAF7F0; color:#2A2420;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-weight:300;
+    display:grid; place-items:center; text-align:center; padding:2rem;
+  }
+  .mark{ width:74px; height:74px; object-fit:contain; margin:0 auto 2rem;
+         filter:invert(1) sepia(1) saturate(.25) brightness(.4); }
+  .eyebrow{ font-size:.64rem; letter-spacing:.34em; text-transform:uppercase;
+            color:#A98445; margin:0 0 1.1rem; }
+  h1{ font-family:'Cormorant Garamond',Georgia,serif; font-weight:400;
+      font-size:clamp(2.4rem,8vw,3.6rem); line-height:1.05; margin:0 0 1rem; }
+  p{ max-width:34ch; margin:0 auto 2.4rem; color:rgba(42,36,32,.62); }
+  a{
+    display:inline-flex; align-items:center; gap:.7rem;
+    min-height:3.25rem; padding:.9rem 1.9rem; border-radius:999px;
+    background:#C9A45C; color:#2B211C; text-decoration:none;
+    font-size:.72rem; letter-spacing:.2em; text-transform:uppercase;
+    transition:background .4s ease;
+  }
+  a:hover{ background:#A98445; }
+</style>
+</head>
+<body>
+  <main>
+    <img class="mark" src="/HappyPlate/logo.png" alt="" width="74" height="74">
+    <p class="eyebrow">Happy Plate Supper Club</p>
+    <h1>This seat is empty.</h1>
+    <p>We couldn&rsquo;t find the page you were looking for — but there&rsquo;s always room at the table.</p>
+    <a href="/HappyPlate/">Back to the table <span aria-hidden="true">&rarr;</span></a>
+  </main>
+</body>
+</html>
