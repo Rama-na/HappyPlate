@@ -108,7 +108,7 @@
 }
 .hero__eyebrow{ color:#E6CB96; }
 .hero__content{
-  position:relative; z-index:2; align-self:end;
+  position:relative; z-index:3; align-self:end;
   width:var(--shell); margin-inline:auto;
   padding-block:clamp(2rem,5vw,4rem);
   display:grid; gap:clamp(1.1rem,2vw,1.6rem); justify-items:start;
@@ -121,7 +121,7 @@
 }
 .hero__actions{ display:flex; flex-wrap:wrap; gap:.75rem; margin-top:.4rem; }
 .hero__cue{
-  position:relative; z-index:2; justify-self:center;
+  position:relative; z-index:3; justify-self:center;
   display:grid; gap:.7rem; justify-items:center;
   padding-bottom:clamp(1.2rem,3vw,2rem);
   font-size:.6rem; letter-spacing:.3em; text-transform:uppercase;
@@ -197,42 +197,79 @@
 }
 
 /* ─────────────────────────────  07 · the evening  ─────────────────── */
-.evening{ background:var(--espresso); color:var(--cream); }
-.evening__head{ display:grid; gap:1rem; max-width:42ch; margin-bottom:clamp(3rem,7vw,5rem); }
-.evening__list{ position:relative; display:grid; gap:0; }
-/* the spine, and the gold thread that fills as you scroll */
-.evening__spine{
-  position:absolute; left:0; top:.4rem; bottom:.4rem; width:1px;
-  background:var(--rule-onDark);
+.evening{ background:var(--espresso); color:var(--cream); padding-top:var(--section-y); }
+.evening__head{ display:grid; gap:1rem; max-width:42ch; margin-bottom:clamp(2.5rem,5vw,4rem); }
+
+.evening__viewport{ position:relative; }
+.evening__track{ display:grid; gap:clamp(2.5rem,6vw,4rem); }
+
+.moment{ display:grid; gap:1.1rem; align-content:start; }
+.moment__media{ background:var(--brown); aspect-ratio:4/3; }
+.moment__media img{ width:100%; height:100%; object-fit:cover;
+  transition:opacity .8s var(--ease), filter .8s var(--ease); opacity:.55; filter:saturate(.75); }
+.moment.is-on .moment__media img{ opacity:1; filter:none; }
+/* the plate is allowed to cross the photographs, but never the words */
+.moment__text{ display:grid; gap:.35rem; position:relative; z-index:3; }
+.moment__time{
+  font-size:.68rem; letter-spacing:.26em; text-transform:uppercase; color:var(--gold);
+  transition:opacity .6s var(--ease); opacity:.55;
 }
-.evening__spine::after{
-  content:""; position:absolute; inset:0 0 auto 0; height:var(--fill,0%);
-  background:linear-gradient(180deg,var(--gold),var(--gold-antique));
+.moment.is-on .moment__time{ opacity:1; }
+.moment__title{ font-family:var(--serif); font-size:clamp(1.7rem,3.4vw,2.4rem); line-height:1.1; }
+.moment__copy{ color:var(--cream-70); max-width:34ch; }
+.moment__copy span{ display:block; }
+
+/* the rail the fork travels.
+   The vertical reading is the base layout — the horizontal one is an
+   enhancement layered on top of it, so anything that opts out of motion still
+   gets all five moments in a reachable column rather than a clipped row. */
+.evening__rail{ position:absolute; left:0; top:.5rem; bottom:.5rem; width:1px; }
+.evening__thread,.evening__fill{ position:absolute; background:var(--rule-onDark); }
+.evening__fill{ background:linear-gradient(var(--gold),var(--gold-antique)); }
+.evening__thread{ inset:0; }
+.evening__fill{ left:0; top:0; width:1px; height:100%; transform:scaleY(0); transform-origin:top; }
+.evening__fork{ position:absolute; color:var(--gold); display:block;
+  top:0; left:50%; width:16px; margin-left:-8px; }
+.evening__fork svg{ display:block; }
+
+.evening{ padding-bottom:var(--section-y); }
+.evening__viewport{ width:var(--shell); margin-inline:auto; padding-left:2.75rem; }
+
+/* ── wide, and motion allowed: pinned, and the night travels sideways ── */
+@media (min-width:62rem) and (prefers-reduced-motion: no-preference){
+  .evening{ padding-bottom:0; }
+  .evening__viewport{
+    width:auto; margin-inline:0; padding-left:0;
+    height:100svh; overflow:hidden;
+    display:flex; flex-direction:column; justify-content:center;
+    padding-bottom:6rem;
+  }
+  .evening__track{
+    --moment-w:min(34rem,42vw);
+    display:flex; grid-template-columns:none;
+    gap:clamp(3rem,6vw,6rem); align-items:center;
+    /* pad by half a viewport so the night opens on 7:30 dead centre and closes
+       the same way on 10:00, instead of the first and last moments clipping
+       against the edges and never reaching the middle */
+    padding-inline:max(calc(50vw - var(--moment-w) / 2), 2.5rem);
+    will-change:transform;
+  }
+  .moment{ flex:0 0 auto; width:min(34rem,42vw); grid-template-columns:none; }
+  .moment__media{ aspect-ratio:5/4; }
+
+  .evening__rail{
+    left:max(calc((100vw - var(--shell)) / 2), 2.5rem);
+    right:max(calc((100vw - var(--shell)) / 2), 2.5rem);
+    top:auto; bottom:3rem; width:auto; height:1px;
+  }
+  .evening__fill{ left:0; top:0; height:1px; width:100%; transform:scaleX(0); transform-origin:left; }
+  .evening__fork{ top:auto; bottom:-7px; left:0; width:22px; margin-left:0; }
 }
-.beat{
-  display:grid; gap:.4rem; padding:clamp(1.6rem,3.5vw,2.4rem) 0 clamp(1.6rem,3.5vw,2.4rem) clamp(1.6rem,4vw,3rem);
-  position:relative;
-}
-.beat + .beat{ border-top:1px solid var(--rule-onDark); }
-.beat::before{
-  content:""; position:absolute; left:-3px; top:calc(clamp(1.6rem,3.5vw,2.4rem) + .55rem);
-  width:7px; height:7px; border-radius:50%;
-  background:var(--espresso); border:1px solid var(--gold-antique);
-  transition:background .5s var(--ease), transform .5s var(--ease);
-}
-.beat.is-on::before{ background:var(--gold); transform:scale(1.25); }
-.beat__time{
-  font-family:var(--sans); font-size:.68rem; letter-spacing:.24em;
-  text-transform:uppercase; color:var(--gold);
-}
-.beat__title{
-  font-family:var(--serif); font-size:clamp(1.5rem,2.8vw,2.15rem); line-height:1.15;
-}
-.beat__copy{ color:var(--cream-70); max-width:38ch; }
-.beat__copy span{ display:block; }
-@media(min-width:52rem){
-  .beat{ grid-template-columns:10rem 1fr; gap:0 clamp(1.5rem,4vw,3rem); align-items:baseline; }
-  .beat__time{ grid-row:span 2; padding-top:.35rem; }
+
+/* nothing to track when nothing moves */
+@media (prefers-reduced-motion: reduce){
+  .evening__rail{ display:none; }
+  .evening__viewport{ padding-left:0; }
 }
 
 /* ─────────────────────────────  08 · food  ────────────────────────── */
@@ -338,6 +375,9 @@
 
 /* ─────────────────────────────  12 · final cta  ───────────────────── */
 .final{ background:var(--cream); text-align:center; }
+.final__lines{ display:grid; gap:.05em; }
+.final__line{ display:block; overflow:hidden; }
+.final__line--em{ font-style:italic; color:var(--wine); }
 .final__inner{ display:grid; gap:clamp(1.5rem,3vw,2.2rem); justify-items:center; }
 .final__word{
   font-size:.68rem; letter-spacing:.4em; text-transform:uppercase; color:var(--gold-antique);

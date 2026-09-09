@@ -3,6 +3,7 @@ import { initSmoothScroll, scrollToId } from './animations/lenis';
 import { ScrollTrigger, refreshOnLoad } from './animations/gsap';
 
 import { IntroLoader } from './components/IntroLoader';
+import { TravelingPlate } from './components/TravelingPlate';
 import { Navigation } from './components/Navigation';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
@@ -34,6 +35,7 @@ export default function App() {
   return (
     <>
       <IntroLoader onDone={() => setReady(true)} />
+      <TravelingPlate />
       <div className="grain" aria-hidden="true" />
 
       <a

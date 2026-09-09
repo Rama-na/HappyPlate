@@ -13,14 +13,27 @@ export function TheTable() {
   useGsap(() => {
     if (prefersReducedMotion() || !root.current) return;
 
-    // the photograph drifts against the sticky column
+    // The photograph opens from a band into the full frame, then keeps drifting
+    // against the sticky column — arriving rather than simply appearing.
+    const frame = media.current?.querySelector('.table__frame');
     const img = media.current?.querySelector('img');
-    if (img) {
-      gsap.set(img, { scale: 1.14 });
-      gsap.fromTo(img,
-        { yPercent: -5 },
+
+    if (frame) {
+      gsap.fromTo(frame,
+        { clipPath: 'inset(14% 0% 14% 0%)' },
         {
-          yPercent: 5,
+          clipPath: 'inset(0% 0% 0% 0%)',
+          ease: 'none',
+          scrollTrigger: { trigger: media.current, start: 'top 90%', end: 'top 34%', scrub: 0.8 },
+        });
+    }
+
+    if (img) {
+      // one tween owns both, so the push-in never fights the parallax
+      gsap.fromTo(img,
+        { yPercent: -5, scale: 1.2 },
+        {
+          yPercent: 5, scale: 1.06,
           ease: 'none',
           scrollTrigger: { trigger: media.current, start: 'top bottom', end: 'bottom top', scrub: true },
         });

@@ -1,16 +1,23 @@
 import { scrollToId } from '../animations/lenis';
-import { SplitText } from './motion/SplitText';
+import { CharReveal } from './motion/CharReveal';
 
+/**
+ * The line the whole page has been walking toward, so it gets the one
+ * letter-level moment: the first half surfaces, the second half drops into
+ * place under it.
+ */
 export function FinalCTA() {
   return (
     <section className="section final">
       <div className="shell final__inner">
-        <SplitText
-          as="h2"
-          className="display display--lg"
-          lineClassName="final__line"
-          lines={['Come as strangers.', <em key="e">Leave as friends.</em>]}
-        />
+        <h2 className="display display--lg final__lines">
+          <span className="final__line">
+            <CharReveal text="Come as strangers." mode="reveal" />
+          </span>
+          <span className="final__line final__line--em">
+            <CharReveal text="Leave as friends." mode="settle" />
+          </span>
+        </h2>
 
         <hr className="rule rule--gold" style={{ width: '4.5rem' }} />
 

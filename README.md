@@ -87,6 +87,35 @@ and the table as it is laid rather than stock plates, and the copy talks about
 the menu without describing dishes. Drop real course photography into the
 manifest when it exists.
 
+## The signature interaction — the dinner travels with you
+
+One plate crosses the entire page. It is a single fixed SVG (`TravelingPlate`),
+not a copy per section, so the evening genuinely travels with the reader: it
+sits behind the hero headline, drifts behind *"Not quite a restaurant."*,
+arrives at the table, shrinks to ride the timeline, crosses the food, slips
+between the type and the room, settles beside the wordmark, and withdraws once
+the reservation form starts.
+
+The gaps matter as much as the moves — through the principles and the dinners
+no leg is active and the plate simply holds still. Movement, then stillness.
+
+Two implementation notes worth keeping:
+
+- **Ranges are measured in `TravelingPlate`, not handed to ScrollTrigger as
+  start/end strings.** One writer reading one scroll value is predictable; a
+  trigger per leg each writing its own pose is not — every refresh re-fires
+  their callbacks, and the pinned evening forces a refresh as it initialises,
+  which left the plate wherever the last callback happened to land.
+- **The plate's rings are broken**, echoing the gap in the logo's circle. A
+  closed circle would rotate invisibly.
+
+**The Evening** is the one horizontal passage: on a wide screen it pins and the
+night travels sideways while you scroll down, with the fork — lifted from the
+logo's rim — riding the rail as the progress marker. On a phone, and for anyone
+who prefers reduced motion, the vertical column is the base layout and the
+horizontal version is layered on top of it, so the five moments are always
+reachable rather than clipped inside an un-scrollable row.
+
 ## Motion and accessibility
 
 Everything scroll-linked runs through GSAP inside a `gsap.context`, so tweens
